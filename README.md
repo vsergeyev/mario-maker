@@ -1,10 +1,13 @@
 # mario-maker
+
+Latest: https://vsergeyev.github.io/mario-maker/
+
+![Screenshot of Mario Maker](https://raw.githubusercontent.com/vsergeyev/mario-maker/master/screenshot.png)
+
 Classic Mario Game with Level-Editor made using **plain Javascript and HTML5 canvas**.
 You can create your own levels and play or simply play the pre-built levels.
 Download the files and run index.html to play the game, 
 or simply visit the following link.
-
-Latest: https://vsergeyev.github.io/mario-maker/
 
 Original: http://pratishshr.github.io/mario-maker/
 
