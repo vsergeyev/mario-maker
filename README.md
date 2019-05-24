@@ -4,7 +4,9 @@ You can create your own levels and play or simply play the pre-built levels.
 Download the files and run index.html to play the game, 
 or simply visit the following link.
 
-http://pratishshr.github.io/mario-maker/
+Latest: https://vsergeyev.github.io/mario-maker/
+
+Original: http://pratishshr.github.io/mario-maker/
 
 ## Controls:
 
@@ -16,3 +18,12 @@ http://pratishshr.github.io/mario-maker/
 ## Level Editor:
 * Click and drag the tiles and click on the element you want to put.
 * Save the map, and go to the 'Created Levels' screen to play the game.
+
+## Items available:
+* Boxes
+* Powerups
+* Coin, Star
+* Yoshi, Toad
+* Goomba, Coopa
+* Piranha
+* Castle parts
