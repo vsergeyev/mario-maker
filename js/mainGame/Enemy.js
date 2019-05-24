@@ -17,8 +17,8 @@ function Enemy() {
 
   this.sX;
   this.sY = 0;
-  this.width = 32;
-  this.height = 32;
+  this.width = MarioSettings.tileSize;
+  this.height = MarioSettings.tileSize;
 
   this.frame = 0;
 
@@ -28,9 +28,20 @@ function Enemy() {
     this.type = 20;
     that.sX = 0;
   };
+  this.coopa = function() {
+    this.type = 21;
+    that.sX = 4 * that.width;
+  };
 
   this.draw = function() {
-    that.sX = that.width * that.frame;
+    if (that.type == 20 ) {
+      that.sX = that.width * that.frame;
+    }
+
+    if (that.type == 21 ) {
+      that.sX = that.width * (that.frame + 5);
+    }
+    
     gameUI.draw(element, that.sX, that.sY, that.width, that.height, that.x, that.y, that.width, that.height);
   };
 
@@ -56,7 +67,15 @@ function Enemy() {
     } else {
       //only animate when not dead
       that.velY += gravity;
-      that.x += that.velX;
+
+      if (that.type == 20 ) { //goomba
+        that.x += that.velX;
+      }
+
+      if (that.type == 21 ) { //coopa
+        that.x -= that.velX/5;
+      }
+      
       that.y += that.velY;
 
       //for animating

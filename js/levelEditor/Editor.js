@@ -13,7 +13,7 @@ function Editor() {
   var map;
   var maxWidth;
   var height = 480;
-  var tileSize = 32;
+  var tileSize = MarioSettings.tileSize;
   var scrollMargin = 0;
 
   var selectedElement = [];
@@ -126,7 +126,22 @@ function Editor() {
       'pipe-right',
       'pipe-top-left',
       'pipe-top-right',
-      'goomba'
+      'goomba',
+      'coopa',
+      'yoshi',
+      'toad',
+      'star',
+      'coin',
+      'piranha',
+      'castle1',
+      'castle2',
+      'castle3',
+      'castle4',
+      'castle5',
+      'castle6',
+      'castle7',
+      'castle8',
+      'castle9'
     ];
     var element;
 
@@ -233,6 +248,10 @@ function Editor() {
             value = 20;
             break;
 
+          case 'coopa':
+            value = 21;
+            break;
+
           case 'flag-pole':
             value = 5;
             break;
@@ -255,6 +274,62 @@ function Editor() {
 
           case 'pipe-top-right':
             value = 10;
+            break;
+
+          case 'yoshi':
+            value = 11;
+            break;
+
+          case 'star':
+            value = 12;
+            break;
+
+          case 'coin':
+            value = 13;
+            break;
+
+          case 'piranha':
+            value = 14;
+            break;
+
+          case 'toad':
+            value = 15;
+            break;
+
+          case 'castle1':
+            value = 30;
+            break;
+
+          case 'castle2':
+            value = 31;
+            break;
+
+          case 'castle3':
+            value = 32;
+            break;
+
+          case 'castle4':
+            value = 33;
+            break;
+
+          case 'castle5':
+            value = 34;
+            break;
+
+          case 'castle6':
+            value = 35;
+            break;
+
+          case 'castle7':
+            value = 36;
+            break;
+
+          case 'castle8':
+            value = 37;
+            break;
+
+          case 'castle9':
+            value = 38;
             break;
 
           default:

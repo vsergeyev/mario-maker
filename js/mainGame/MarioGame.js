@@ -22,6 +22,7 @@ function MarioGame() {
 
   var keys = [];
   var goombas;
+  var coopas;
   var powerUps;
   var bullets;
   var bulletFlag = false;
@@ -40,9 +41,10 @@ function MarioGame() {
     height = 480;
     maxWidth = 0;
     viewPort = 1280;
-    tileSize = 32;
+    tileSize = MarioSettings.tileSize;
     translatedDist = 0;
     goombas = [];
+    coopas = [];
     powerUps = [];
     bullets = [];
 
@@ -83,8 +85,8 @@ function MarioGame() {
     //calculates the max width of the game according to map size
     for (var row = 0; row < map.length; row++) {
       for (var column = 0; column < map[row].length; column++) {
-        if (maxWidth < map[row].length * 32) {
-          maxWidth = map[column].length * 32;
+        if (maxWidth < map[row].length * MarioSettings.tileSize) {
+          maxWidth = map[column].length * MarioSettings.tileSize;
         }
       }
     }
@@ -200,6 +202,11 @@ function MarioGame() {
       goombas[i].update();
     }
 
+    for (var i = 0; i < coopas.length; i++) {
+      coopas[i].draw();
+      coopas[i].update();
+    }
+
     that.checkPowerUpMarioCollision();
     that.checkBulletEnemyCollision();
     that.checkEnemyMarioCollision();
@@ -224,6 +231,10 @@ function MarioGame() {
     }
     for (var i = 0; i < goombas.length; i++) {
       goombas[i].grounded = false;
+    }
+
+    for (var i = 0; i < coopas.length; i++) {
+      coopas[i].grounded = false;
     }
 
     for (var row = 0; row < map.length; row++) {
@@ -341,6 +352,53 @@ function MarioGame() {
             that.checkElementBulletCollision(element);
             break;
 
+          case 11: //yoshi
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.yoshi();
+            element.draw();
+
+            // that.checkElementMarioCollision(element, row, column);
+            that.checkElementPowerUpCollision(element);
+            that.checkElementEnemyCollision(element);
+            //that.checkElementBulletCollision(element);
+            break;
+
+          case 12: //star
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.star();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            break;
+
+          case 13: //coin
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.coin();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            break;
+
+          case 14: //piranha
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.piranha();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            that.checkElementEnemyCollision(element);
+            break;
+
+          case 15: //toad
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.toad();
+            element.draw();
+            break;
+
           case 20: //goomba
             var enemy = new Enemy();
             enemy.x = column * tileSize;
@@ -350,6 +408,30 @@ function MarioGame() {
 
             goombas.push(enemy);
             map[row][column] = 0;
+            break;
+
+          case 21: //coopa
+            var enemy = new Enemy();
+            enemy.x = column * tileSize;
+            enemy.y = row * tileSize;
+            enemy.coopa();
+            enemy.draw();
+
+            coopas.push(enemy);
+            map[row][column] = 0;
+        }
+
+        if (map[row][column] > 29) {
+          //castle
+          element.x = column * tileSize;
+          element.y = row * tileSize;
+          element.castle(map[row][column]);
+          element.draw();
+
+          that.checkElementMarioCollision(element, row, column);
+          that.checkElementPowerUpCollision(element);
+          that.checkElementEnemyCollision(element);
+          that.checkElementBulletCollision(element);
         }
       }
     }
@@ -464,6 +546,21 @@ function MarioGame() {
         gameSound.play('coin');
       }
     }
+
+    if (collisionDirection) {
+      if (element.type == 13 || element.type == 12) {
+        //Coin
+        score.coinScore++;
+        score.totalScore += 100;
+
+        score.updateCoinScore();
+        score.updateTotalScore();
+        map[row][column] = 0; //sets to empty
+
+        //sound when coin block is hit
+        gameSound.play('coin');
+      }
+    }
   };
 
   this.checkElementPowerUpCollision = function(element) {
@@ -488,6 +585,19 @@ function MarioGame() {
           goombas[i].velX *= -1;
         } else if (collisionDirection == 'b') {
           goombas[i].grounded = true;
+        }
+      }
+    }
+
+    for (var i = 0; i < coopas.length; i++) {
+      if (coopas[i].state != 'deadFromBullet') {
+        //so that coopas fall from the map when dead from bullet
+        var collisionDirection = that.collisionCheck(coopas[i], element);
+
+        if (collisionDirection == 'l' || collisionDirection == 'r') {
+          coopas[i].velX *= -1;
+        } else if (collisionDirection == 'b') {
+          coopas[i].grounded = true;
         }
       }
     }
@@ -547,6 +657,75 @@ function MarioGame() {
           gameSound.play('killEnemy');
         } else if (collWithMario == 'r' || collWithMario == 'l' || collWithMario == 'b') {
           goombas[i].velX *= -1;
+
+          if (mario.type == 'big') {
+            mario.type = 'small';
+            mario.invulnerable = true;
+            collWithMario = undefined;
+
+            //sound when mario powerDowns
+            gameSound.play('powerDown');
+
+            setTimeout(function() {
+              mario.invulnerable = false;
+            }, 1000);
+          } else if (mario.type == 'fire') {
+            mario.type = 'big';
+            mario.invulnerable = true;
+
+            collWithMario = undefined;
+
+            //sound when mario powerDowns
+            gameSound.play('powerDown');
+
+            setTimeout(function() {
+              mario.invulnerable = false;
+            }, 1000);
+          } else if (mario.type == 'small') {
+            //kill mario if collision occurs when he is small
+            that.pauseGame();
+
+            mario.frame = 13;
+            collWithMario = undefined;
+
+            score.lifeCount--;
+            score.updateLifeCount();
+
+            //sound when mario dies
+            gameSound.play('marioDie');
+
+            timeOutId = setTimeout(function() {
+              if (score.lifeCount == 0) {
+                that.gameOver();
+              } else {
+                that.resetGame();
+              }
+            }, 3000);
+            break;
+          }
+        }
+      }
+    }
+
+    //coopas
+    for (var i = 0; i < coopas.length; i++) {
+      if (!mario.invulnerable && coopas[i].state != 'dead' && coopas[i].state != 'deadFromBullet') {
+        //if mario is invulnerable or coopas state is dead, collision doesnt occur
+        var collWithMario = that.collisionCheck(coopas[i], mario);
+
+        if (collWithMario == 't') {
+          //kill coopas if collision is from top
+          coopas[i].state = 'dead';
+
+          mario.velY = -mario.speed;
+
+          score.totalScore += 1000;
+          score.updateTotalScore();
+
+          //sound when enemy dies
+          gameSound.play('killEnemy');
+        } else if (collWithMario == 'r' || collWithMario == 'l' || collWithMario == 'b') {
+          coopas[i].velX *= -1;
 
           if (mario.type == 'big') {
             mario.type = 'small';
@@ -848,6 +1027,7 @@ function MarioGame() {
     gameSound = null;
 
     goombas = [];
+    coopas = [];
     bullets = [];
     powerUps = [];
   };

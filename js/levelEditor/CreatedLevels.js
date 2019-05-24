@@ -64,7 +64,7 @@ function CreatedLevels() {
     var levelName = storage.getItemName(i);
     var level = storage.getItem(levelName);
     var map = { 1: level }; //always only one level in saved maps.
-
+    console.log(level);
     marioMakerInstance.startGame(map);
   };
 

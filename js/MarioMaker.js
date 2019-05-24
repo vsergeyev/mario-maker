@@ -17,16 +17,17 @@ var MarioMaker = (function() {
     var editorStarted = 0;
 
     var backToMenuBtn;
+    var jumpBtn;
 
     //instances
-    var marioGame;
+    this.marioGame;
     var editor;
     var createdLevels;
 
     var that = this;
 
     this.init = function() {
-      marioGame = new MarioGame();
+      this.marioGame = new MarioGame();
       editor = new Editor();
       createdLevels = new CreatedLevels();
 
@@ -38,6 +39,7 @@ var MarioMaker = (function() {
       startGameButton = view.create('button');
       createdLevelsButton = view.create('div');
       backToMenuBtn = view.create('button');
+      jumpBtn = view.create('button');
 
       view.addClass(btnWrapper, 'btn-wrapper');
       view.addClass(startScreen, 'start-screen');
@@ -45,11 +47,13 @@ var MarioMaker = (function() {
       view.addClass(startGameButton, 'start-btn');
       view.addClass(createdLevelsButton, 'created-btn');
       view.addClass(backToMenuBtn, 'back-btn');
+      view.addClass(jumpBtn, 'jump-btn');
 
       view.append(startScreen, editorButton);
       view.append(startScreen, startGameButton);
       view.append(startScreen, createdLevelsButton);
       view.append(btnWrapper, backToMenuBtn);
+      view.append(btnWrapper, jumpBtn);
       view.append(mainWrapper, startScreen);
       view.append(mainWrapper, btnWrapper);
 
@@ -58,6 +62,7 @@ var MarioMaker = (function() {
       createdLevelsButton.onclick = that.startCreatedLevels;
 
       backToMenuBtn.onclick = that.backToMenu;
+      jumpBtn.onclick = that.Jump;
 
       startGameButton.onclick = function() {
         map = that.loadMainGameMap();
@@ -78,10 +83,11 @@ var MarioMaker = (function() {
     };
 
     this.startGame = function(levelMap) {
-      view.style(backToMenuBtn, { display: 'block' });
+      view.style(backToMenuBtn, { display: 'inline-block' });
+      view.style(jumpBtn, { display: 'inline-block' });
 
-      marioGame.clearInstances();
-      marioGame.init(levelMap, 1); //initiate level 1 of map
+      that.marioGame.clearInstances();
+      that.marioGame.init(levelMap, 1); //initiate level 1 of map
 
       that.hideMainMenu();
       editor.removeEditorScreen();
@@ -89,7 +95,8 @@ var MarioMaker = (function() {
     };
 
     this.startEditor = function() {
-      view.style(backToMenuBtn, { display: 'block' });
+      view.style(backToMenuBtn, { display: 'inline-block' });
+      view.style(jumpBtn, { display: 'inline-block' });
 
       if (editorStarted == 0) {
         //instantiate only once, after that just show and hide the editor screen
@@ -100,23 +107,24 @@ var MarioMaker = (function() {
       }
 
       that.hideMainMenu();
-      marioGame.removeGameScreen();
+      that.marioGame.removeGameScreen();
       createdLevels.removeCreatedLevelsScreen();
     };
 
     this.startCreatedLevels = function() {
-      view.style(backToMenuBtn, { display: 'block' });
+      view.style(backToMenuBtn, { display: 'inline-block' });
+      view.style(jumpBtn, { display: 'inline-block' });
 
       createdLevels.init();
       that.hideMainMenu();
-      marioGame.removeGameScreen();
+      that.marioGame.removeGameScreen();
       editor.removeEditorScreen();
     };
 
     this.backToMenu = function() {
-      marioGame.pauseGame(); //pause game when the back button is pressed so that the gameloop doesnt run more than once
-      marioGame.clearTimeOut(); //when mario dies, a timeout starts for resetting the game. Pressing the back button clears that timeout
-      marioGame.removeGameScreen();
+      that.marioGame.pauseGame(); //pause game when the back button is pressed so that the gameloop doesnt run more than once
+      that.marioGame.clearTimeOut(); //when mario dies, a timeout starts for resetting the game. Pressing the back button clears that timeout
+      that.marioGame.removeGameScreen();
 
       editor.removeEditorScreen();
 
@@ -124,7 +132,15 @@ var MarioMaker = (function() {
       that.showMainMenu();
 
       view.style(backToMenuBtn, { display: 'none' });
+      view.style(jumpBtn, { display: 'none' });
     };
+
+    this.Jump = function() {
+      document.body.dispatchEvent(new KeyboardEvent('keydown', {'key': ' ', 'keyCode':'32'}));
+      setTimeout(function() {
+        document.body.dispatchEvent(new KeyboardEvent('keyup', {'key': ' ', 'keyCode':'32'}));
+      }, 100);
+    }
 
     this.hideMainMenu = function() {
       view.style(startScreen, { display: 'none' });
